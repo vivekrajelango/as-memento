@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Lock, User, ArrowRight } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function AdminLogin() {
     const [username, setUsername] = useState("");
@@ -17,36 +18,43 @@ export default function AdminLogin() {
         setError("");
         setLoading(true);
 
-        // Hardcoded credentials as requested for the prototype
-        if (username === "admin" && password === "admin123") {
-            // Simulate API call/processing
-            setTimeout(() => {
-                // Set a simple cookie for "auth" - In a real app use HttpOnly cookies via Server Actions/API
+        try {
+            const { data, error } = await supabase.rpc('login_admin', {
+                p_username: username,
+                p_password: password
+            });
+
+            if (error) throw error;
+
+            if (data) {
                 document.cookie = "admin_auth=true; path=/; max-age=86400"; // Expires in 1 day
                 router.push("/dashboard");
-            }, 800);
-        } else {
-            setTimeout(() => {
+            } else {
                 setError("Invalid username or password");
                 setLoading(false);
-            }, 500);
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("Something went wrong. Please try again.");
+            setLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-stone-100 overflow-hidden">
-                <div className="bg-maroon p-8 text-center">
-                    <div className="relative w-32 h-12 mx-auto mb-4 grayscale brightness-0 invert opacity-90">
+                <div className="pt-10 pb-6 px-8 text-center bg-white">
+                    <div className="relative w-48 h-16 mx-auto mb-6">
                         <Image
                             src="/images/logo1.png"
                             alt="Momento Admin"
                             fill
                             className="object-contain"
+                            priority
                         />
                     </div>
-                    <h1 className="text-white text-xl font-serif font-bold">Admin Portal</h1>
-                    <p className="text-maroon-100 text-sm mt-1">Please log in to continue</p>
+                    <h1 className="text-2xl font-serif font-bold text-stone-800">Admin Portal</h1>
+                    <p className="text-stone-500 text-sm mt-2">Enter your credentials to manage the store</p>
                 </div>
 
                 <div className="p-8">

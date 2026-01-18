@@ -43,7 +43,7 @@ export default function Header() {
 
                     {/* Icons */}
                     <div className="flex items-center space-x-4">
-                        <Link href="/admin/login" className="p-2 text-stone-600 hover:text-maroon transition-colors">
+                        <Link href="/admin/login" className="p-2 text-stone-600 hover:text-maroon transition-colors hidden md:block">
                             <User size={22} strokeWidth={1.5} />
                         </Link>
                         <Link href="/cart" className="p-2 text-stone-600 hover:text-maroon transition-colors relative">
@@ -120,7 +120,7 @@ export default function Header() {
 
                                 <div className="mt-8 pt-8 border-t border-stone-100">
                                     <h3 className="text-stone-400 text-xs font-bold uppercase tracking-widest mb-4">Fast Access</h3>
-                                    <div className="flex flex-col gap-4">
+                                    <div className="grid grid-cols-2 gap-4">
                                         <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
                                             <ShoppingBag className="text-maroon mb-2" size={20} />
                                             <span className="text-xs font-medium text-stone-600">Cart</span>
@@ -129,6 +129,10 @@ export default function Header() {
                                                     {count} Items
                                                 </span>
                                             )}
+                                        </Link>
+                                        <Link href="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
+                                            <User className="text-maroon mb-2" size={20} />
+                                            <span className="text-xs font-medium text-stone-600">Admin</span>
                                         </Link>
                                     </div>
                                 </div>

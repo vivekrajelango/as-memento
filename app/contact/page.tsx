@@ -4,11 +4,6 @@ import { motion } from "framer-motion";
 import { MessageCircle, MapPin, Phone, Mail, Send } from "lucide-react";
 
 export default function ContactPage() {
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle form submission logic
-        alert("Thank you for your enquiry! We will contact you shortly.");
-    };
 
     return (
         <div className="min-h-screen bg-stone-50 pb-20">
@@ -47,7 +42,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-stone-900">Email</h3>
-                                        <p className="text-stone-500">hello@momento-gifts.com</p>
+                                        <p className="text-stone-500">hello@asmomento.com</p>
                                     </div>
                                 </div>
 
@@ -58,8 +53,8 @@ export default function ContactPage() {
                                     <div>
                                         <h3 className="font-semibold text-stone-900">Visit Us</h3>
                                         <p className="text-stone-500">
-                                            12, Temple Street, T. Nagar,<br />
-                                            Chennai, Tamil Nadu - 600017
+                                            12, Meenakshi Street, Aarappalayam,<br />
+                                            Madurai, Tamil Nadu - 625001
                                         </p>
                                     </div>
                                 </div>
@@ -79,41 +74,6 @@ export default function ContactPage() {
                             </div>
                         </div>
 
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <h2 className="text-2xl font-serif font-bold text-stone-800 mb-6">Send an Enquiry</h2>
-
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 mb-1">Your Name</label>
-                                <input type="text" className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none transition-all bg-stone-50" placeholder="e.g. Priya" required />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 mb-1">Phone Number</label>
-                                <input type="tel" className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none transition-all bg-stone-50" placeholder="+91" required />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 mb-1">Occasion</label>
-                                <select className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none transition-all bg-stone-50">
-                                    <option>Wedding</option>
-                                    <option>Baby Shower</option>
-                                    <option>Housewarming</option>
-                                    <option>Corporate</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 mb-1">Message / Requirements</label>
-                                <textarea rows={4} className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none transition-all bg-stone-50" placeholder="Tell us about the quantity and customization needed..." required></textarea>
-                            </div>
-
-                            <button type="submit" className="w-full bg-maroon text-white font-bold py-3 rounded-xl hover:bg-[#600000] transition-colors flex items-center justify-center gap-2">
-                                <Send size={18} />
-                                Send Message
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>

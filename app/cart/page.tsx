@@ -18,7 +18,7 @@ export default function CartPage() {
         message += `\nTotal: ₹${total}\n\nPlease confirm availability and shipping details.`;
 
         const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/919876543210?text=${encodedMessage}`, "_blank");
+        window.open(`https://wa.me/919884246030?text=${encodedMessage}`, "_blank");
     };
 
     if (items.length === 0) {
@@ -183,9 +183,9 @@ export default function CartPage() {
                             Confirm Order
                         </button>
 
-                        {/* <p className="text-xs text-stone-400 text-center mt-4 leading-relaxed">
+                        <p className="text-xs text-stone-400 text-center mt-4 leading-relaxed">
                             By clicking Confirm, you will be redirected to WhatsApp to send your order details directly to our team.
-                        </p> */}
+                        </p>
                     </div>
                 </div>
             </div>

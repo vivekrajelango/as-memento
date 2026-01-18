@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, Search, Menu, Heart, X, ChevronRight } from "lucide-react";
+import { ShoppingBag, User, Menu, Heart, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 
@@ -43,9 +43,9 @@ export default function Header() {
 
                     {/* Icons */}
                     <div className="flex items-center space-x-4">
-                        <button className="p-2 text-stone-600 hover:text-maroon transition-colors">
-                            <Search size={22} strokeWidth={1.5} />
-                        </button>
+                        <Link href="/admin/login" className="p-2 text-stone-600 hover:text-maroon transition-colors">
+                            <User size={22} strokeWidth={1.5} />
+                        </Link>
                         <Link href="/cart" className="p-2 text-stone-600 hover:text-maroon transition-colors relative">
                             <ShoppingBag size={22} strokeWidth={1.5} />
                             {count > 0 && (

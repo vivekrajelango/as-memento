@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, Search, Menu, Heart, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { count } = useCart();
 
     return (
         <>
@@ -44,14 +46,13 @@ export default function Header() {
                         <button className="p-2 text-stone-600 hover:text-maroon transition-colors">
                             <Search size={22} strokeWidth={1.5} />
                         </button>
-                        <button className="p-2 text-stone-600 hover:text-maroon transition-colors hidden md:block">
-                            <Heart size={22} strokeWidth={1.5} />
-                        </button>
                         <Link href="/cart" className="p-2 text-stone-600 hover:text-maroon transition-colors relative">
                             <ShoppingBag size={22} strokeWidth={1.5} />
-                            <span className="absolute top-1 right-0 bg-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                                0
-                            </span>
+                            {count > 0 && (
+                                <span className="absolute top-1 right-0 bg-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                                    {count}
+                                </span>
+                            )}
                         </Link>
                     </div>
                 </div>
@@ -119,14 +120,15 @@ export default function Header() {
 
                                 <div className="mt-8 pt-8 border-t border-stone-100">
                                     <h3 className="text-stone-400 text-xs font-bold uppercase tracking-widest mb-4">Fast Access</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
-                                            <Heart className="text-maroon mb-2" size={20} />
-                                            <span className="text-xs font-medium text-stone-600">Wishlist</span>
-                                        </Link>
+                                    <div className="flex flex-col gap-4">
                                         <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
                                             <ShoppingBag className="text-maroon mb-2" size={20} />
                                             <span className="text-xs font-medium text-stone-600">Cart</span>
+                                            {count > 0 && (
+                                                <span className="mt-1 px-2 py-0.5 bg-gold text-white text-[10px] rounded-full font-bold">
+                                                    {count} Items
+                                                </span>
+                                            )}
                                         </Link>
                                     </div>
                                 </div>

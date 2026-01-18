@@ -7,7 +7,7 @@ export default function AboutPage() {
                 <span className="text-maroon text-xs tracking-widest uppercase font-bold">Our Story</span>
                 <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-800 mt-4 mb-6">Preserving Tradition through Gifts</h1>
                 <p className="text-lg text-stone-600 leading-relaxed font-light">
-                    Momento was born out of a love for South Indian heritage. We believe that return gifts are not just objects, but a gesture of gratitude and a memory carried forward.
+                    AS Memento was born out of a love for South Indian heritage. We believe that return gifts are not just objects, but a gesture of gratitude and a memory carried forward.
                 </p>
             </div>
 

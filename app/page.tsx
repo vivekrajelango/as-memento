@@ -124,7 +124,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-maroon font-bold rounded-full hover:bg-gold hover:text-white transition-all transform hover:scale-105 shadow-xl"
           >
             <MessageCircle size={20} />
-            Chat on WhatsApp
+            Live Chat
           </a>
         </div>
       </section>

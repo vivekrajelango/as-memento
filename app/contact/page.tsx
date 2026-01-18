@@ -74,7 +74,7 @@ export default function ContactPage() {
                                     className="flex items-center justify-center gap-2 w-full bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#128C7E] transition-colors shadow-lg shadow-green-200"
                                 >
                                     <MessageCircle size={20} />
-                                    Chat on WhatsApp
+                                    Live Chat
                                 </a>
                             </div>
                         </div>

@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Momento | South Indian Return Gifts",
+  title: "Aarthi Sara Memento | Return Gifts",
   description: "Beautiful Return Gifts for Every Auspicious Occasion. Wedding, Baby Shower, Housewarming gifts.",
   manifest: "/manifest.json",
   appleWebApp: {
@@ -34,6 +34,8 @@ export const viewport: Viewport = {
   userScalable: false, // Often used for PWA feel
 };
 
+import { CartProvider } from "@/context/CartContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -44,10 +46,12 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}
       >
-        <Header />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <CartProvider>
+          <Header />
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </CartProvider>
       </body>
     </html>
   );

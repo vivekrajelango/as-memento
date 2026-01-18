@@ -5,8 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield } from "lucide-react";
+import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 
 // Mock Data lookup (in real app, fetch from API)
 const products: Record<string, any> = {
@@ -21,12 +22,26 @@ export default function ProductDetail() {
     const id = params.id as string;
     const product = products[id] || products["default"];
 
+    const { addItem } = useCart();
     const [activeImage, setActiveImage] = useState(0);
-    const [isWishlisted, setIsWishlisted] = useState(false);
     const [openSection, setOpenSection] = useState<string | null>("details");
+    const [isAdded, setIsAdded] = useState(false);
 
     const toggleSection = (section: string) => {
         setOpenSection(openSection === section ? null : section);
+    };
+
+    const handleAddToCart = () => {
+        addItem({
+            id: id,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            quantity: 1,
+            category: "Return Gift"
+        });
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
     };
 
     return (
@@ -42,12 +57,6 @@ export default function ProductDetail() {
                 <div className="flex gap-2 pointer-events-auto">
                     <button className="p-2 bg-white/80 backdrop-blur-md rounded-full shadow-sm text-stone-700 hover:text-maroon">
                         <Share2 size={20} />
-                    </button>
-                    <button
-                        onClick={() => setIsWishlisted(!isWishlisted)}
-                        className={cn("p-2 bg-white/80 backdrop-blur-md rounded-full shadow-sm transition-colors", isWishlisted ? "text-maroon fill-current" : "text-stone-700 hover:text-maroon")}
-                    >
-                        <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
                     </button>
                 </div>
             </div>
@@ -94,6 +103,29 @@ export default function ProductDetail() {
                             <span className="text-3xl font-medium text-maroon">₹{product.price}</span>
                             <span className="text-lg text-stone-400 line-through">₹{Math.floor(product.price * 1.2)}</span>
                             <span className="text-sm font-medium text-emerald-600">20% OFF</span>
+                        </div>
+
+                        {/* Desktop Add to Cart Button */}
+                        <div className="hidden md:flex gap-4 mb-8">
+                            <button
+                                onClick={handleAddToCart}
+                                className={cn(
+                                    "flex-1 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-all transform hover:scale-[1.02]",
+                                    isAdded ? "bg-emerald-600" : "bg-maroon hover:bg-[#600000]"
+                                )}
+                            >
+                                {isAdded ? (
+                                    <>
+                                        <Check size={20} />
+                                        Added to Cart
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingBag size={20} />
+                                        Add to Cart
+                                    </>
+                                )}
+                            </button>
                         </div>
 
                         <p className="text-stone-600 leading-relaxed mb-8">
@@ -152,20 +184,24 @@ export default function ProductDetail() {
 
             {/* Fixed Bottom Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 md:hidden z-50 flex gap-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
-                <button className="flex-1 bg-white border border-maroon text-maroon font-bold py-3 rounded-full flex items-center justify-center gap-2">
-                    Add to Wishlist
-                </button>
-                <button className="flex-1 bg-gradient-to-r from-maroon to-[#600000] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-maroon/30">
-                    <MessageCircle size={18} />
-                    Enquire
-                </button>
-            </div>
-
-            {/* Desktop CTA (Hidden on Mobile) */}
-            <div className="hidden md:block fixed bottom-8 right-8 z-40">
-                <button className="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center gap-2">
-                    <MessageCircle size={24} />
-                    <span className="font-bold">Chat with us</span>
+                <button
+                    onClick={handleAddToCart}
+                    className={cn(
+                        "w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-maroon/30 transition-colors",
+                        isAdded ? "bg-emerald-600" : "bg-gradient-to-r from-maroon to-[#600000]"
+                    )}
+                >
+                    {isAdded ? (
+                        <>
+                            <Check size={18} />
+                            Added
+                        </>
+                    ) : (
+                        <>
+                            <ShoppingBag size={18} />
+                            Add to Cart
+                        </>
+                    )}
                 </button>
             </div>
         </div>

@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'South Indian Gifts',
-        short_name: 'Gifts',
+        name: 'Aarthi Sara Memento',
+        short_name: 'Memento',
         description: 'Beautiful Return Gifts for Every Auspicious Occasion',
         start_url: '/',
         display: 'standalone',

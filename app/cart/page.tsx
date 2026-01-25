@@ -3,13 +3,53 @@
 import { useCart, CartItem } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Plus, Minus, ArrowRight, MessageCircle } from "lucide-react";
+import { Trash2, Plus, Minus, ArrowRight, MessageCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, total, clearCart } = useCart();
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleWhatsAppCheckout = () => {
+    const handleWhatsAppCheckout = async () => {
         if (items.length === 0) return;
+
+        setIsProcessing(true);
+
+        // Check if admin is logged in to deduct points (4% of total)
+        const cookies = document.cookie.split(';');
+        const authCookie = cookies.find(c => c.trim().startsWith('admin_auth='));
+
+        if (authCookie) {
+            const value = decodeURIComponent(authCookie.split('=')[1].trim());
+            const username = value === "true" ? "admin" : value;
+            const deduction = Math.round(total * 0.04); // 4% deduction
+
+            const { data: adminData } = await supabase
+                .from('admin_users')
+                .select('wallet_balance')
+                .eq('username', username)
+                .single();
+
+            if (adminData) {
+                if (adminData.wallet_balance < deduction) {
+                    alert(`Insufficient points! You need ${deduction} points, but you have ${adminData.wallet_balance}.`);
+                    setIsProcessing(false);
+                    return;
+                }
+
+                const { error: updateError } = await supabase
+                    .from('admin_users')
+                    .update({ wallet_balance: adminData.wallet_balance - deduction })
+                    .eq('username', username);
+
+                if (updateError) {
+                    console.error("Deduction error:", updateError);
+                } else {
+                    console.log(`Deducted ${deduction} points for order.`);
+                }
+            }
+        }
 
         let message = "Hello! I would like to place an order for the following items:\n\n";
         items.forEach((item, index) => {
@@ -19,6 +59,7 @@ export default function CartPage() {
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/919884246030?text=${encodedMessage}`, "_blank");
+        setIsProcessing(false);
     };
 
     if (items.length === 0) {
@@ -177,10 +218,15 @@ export default function CartPage() {
 
                         <button
                             onClick={handleWhatsAppCheckout}
-                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-100"
+                            disabled={isProcessing}
+                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-100 disabled:opacity-70 disabled:scale-100"
                         >
-                            <MessageCircle size={20} />
-                            Confirm Order
+                            {isProcessing ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : (
+                                <MessageCircle size={20} />
+                            )}
+                            {isProcessing ? "Processing..." : "Confirm Order"}
                         </button>
 
                         <p className="text-xs text-stone-400 text-center mt-4 leading-relaxed">

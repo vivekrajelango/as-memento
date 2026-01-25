@@ -27,7 +27,7 @@ export default function AdminLogin() {
             if (error) throw error;
 
             if (data) {
-                document.cookie = "admin_auth=true; path=/; max-age=86400"; // Expires in 1 day
+                document.cookie = `admin_auth=${username}; path=/; max-age=86400`; // Store username
                 router.push("/dashboard");
             } else {
                 setError("Invalid username or password");

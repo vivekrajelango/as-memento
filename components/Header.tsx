@@ -23,12 +23,12 @@ export default function Header() {
                     </button>
 
                     {/* Logo */}
-                    <Link href="/" className="relative h-16 w-48 md:w-36 flex-shrink-0">
+                    <Link href="/" className="relative h-16 w-64 md:w-48 flex-shrink-0">
                         <Image
-                            src="/images/logo1.png"
+                            src="/images/logo2.png"
                             alt="Momento"
                             fill
-                            className="object-contain"
+                            className="object-contain object-left p-1"
                             priority
                         />
                     </Link>
@@ -81,9 +81,9 @@ export default function Header() {
                         >
                             <div className="p-6">
                                 <div className="flex justify-between items-center mb-8">
-                                    <div className="relative h-10 w-28">
+                                    <div className="relative h-12 w-36">
                                         <Image
-                                            src="/images/logo1.png"
+                                            src="/images/logo2.png"
                                             alt="Momento"
                                             fill
                                             className="object-contain object-left"

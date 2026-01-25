@@ -44,9 +44,9 @@ export default function AdminLogin() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-stone-100 overflow-hidden">
                 <div className="pt-10 pb-6 px-8 text-center bg-white">
-                    <div className="relative w-48 h-16 mx-auto mb-6">
+                    <div className="relative w-56 h-20 mx-auto mb-6">
                         <Image
-                            src="/images/logo1.png"
+                            src="/images/logo2.png"
                             alt="Momento Admin"
                             fill
                             className="object-contain"

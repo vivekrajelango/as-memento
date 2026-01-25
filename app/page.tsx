@@ -1,46 +1,34 @@
+"use client";
+
 import Hero from "@/components/Hero";
 import CategorySection from "@/components/CategorySection";
 import ProductCard from "@/components/ProductCard";
-import { ArrowRight, Star, Truck, ShieldCheck, Gift, MessageCircle } from "lucide-react";
+import { ArrowRight, Truck, ShieldCheck, Gift, MessageCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-
-// Mock Data
-const featuredProducts = [
-  {
-    id: "1",
-    name: "Brass Diya Set",
-    price: 120,
-    category: "Decor",
-    image: "/images/decor.png",
-    isBulkAvailable: true,
-  },
-  {
-    id: "2",
-    name: "Jute Potli Bags",
-    price: 45,
-    category: "Eco-Friendly",
-    image: "/images/housewarming.png", // Using housewarming bag image
-    isBulkAvailable: true,
-  },
-  {
-    id: "3",
-    name: "Kumkum Box",
-    price: 85,
-    category: "Wedding",
-    image: "/images/baby-shower.png", // Using baby shower items which has kumkum/turmeric
-    isBulkAvailable: true,
-  },
-  {
-    id: "4",
-    name: "German Silver Plate",
-    price: 250,
-    category: "Housewarming",
-    image: "/images/wedding.png", // Using wedding image which has silver/brass items
-    isBulkAvailable: true,
-  },
-];
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("asm-products")
+        .select("*")
+        .limit(4)
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        setFeaturedProducts(data);
+      }
+      setLoading(false);
+    };
+    fetchFeatured();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
@@ -64,11 +52,18 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {featuredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-3">
+              <Loader2 className="w-8 h-8 text-maroon animate-spin" />
+              <p className="text-stone-400 text-sm">Loading best sellers...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+              {featuredProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
+          )}
 
           <div className="mt-8 text-center md:hidden">
             <Link href="/products" className="inline-flex items-center gap-2 px-6 py-3 border border-stone-200 rounded-full text-stone-600 font-medium hover:bg-stone-50">

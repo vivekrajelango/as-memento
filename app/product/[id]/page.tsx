@@ -1,48 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield, ShoppingBag, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
-
-// Mock Data lookup (in real app, fetch from API)
-const products: Record<string, any> = {
-    "1": { name: "Brass Diya Set", price: 120, description: "Traditional brass diya set, perfect for Diwali and wedding return gifts. Handcrafted by artisans from Kumbakonam.", images: ["/images/decor.png", "/images/festivals.png"] },
-    // Fallback for demo
-    "default": { name: "Premium Return Gift", price: 250, description: "Elegant and eco-friendly return gift suitable for all auspicious occasions.", images: ["/images/wedding.png"] }
-};
+import { supabase } from "@/lib/supabaseClient";
 
 export default function ProductDetail() {
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
-    const product = products[id] || products["default"];
 
+    const [product, setProduct] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const { addItem } = useCart();
     const [activeImage, setActiveImage] = useState(0);
     const [openSection, setOpenSection] = useState<string | null>("details");
     const [isAdded, setIsAdded] = useState(false);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from("asm-products")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (!error && data) {
+                setProduct(data);
+            } else {
+                router.push("/products");
+            }
+            setLoading(false);
+        };
+        if (id) fetchProduct();
+    }, [id, router]);
 
     const toggleSection = (section: string) => {
         setOpenSection(openSection === section ? null : section);
     };
 
     const handleAddToCart = () => {
+        if (!product) return;
         addItem({
             id: id,
             name: product.name,
             price: product.price,
-            image: product.images[0],
+            image: product.image,
             quantity: 1,
-            category: "Return Gift"
+            category: product.category
         });
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 2000);
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-3">
+                <Loader2 className="w-8 h-8 text-maroon animate-spin" />
+                <p className="text-stone-400 text-sm">Loading product details...</p>
+            </div>
+        );
+    }
+
+    if (!product) return null;
+
+    const images = [product.image]; // In database we currently only have one image field
 
     return (
         <div className="min-h-screen bg-white pb-32 md:pb-20">
@@ -66,7 +94,7 @@ export default function ProductDetail() {
                 <div className="w-full md:w-1/2">
                     <div className="relative aspect-[4/5] md:aspect-square w-full bg-stone-100 md:rounded-3xl overflow-hidden">
                         <Image
-                            src={product.images[activeImage] || product.images[0]}
+                            src={images[activeImage] || images[0]}
                             alt={product.name}
                             fill
                             className="object-cover"
@@ -74,9 +102,9 @@ export default function ProductDetail() {
                         />
                     </div>
                     {/* Thumbnails (only if multiple) */}
-                    {product.images.length > 1 && (
+                    {images.length > 1 && (
                         <div className="flex gap-4 mt-4 px-4 md:px-0 overflow-x-auto">
-                            {product.images.map((img: string, idx: number) => (
+                            {images.map((img: string, idx: number) => (
                                 <button
                                     key={idx}
                                     onClick={() => setActiveImage(idx)}
@@ -100,9 +128,15 @@ export default function ProductDetail() {
                         <h1 className="text-3xl md:text-4xl font-serif text-stone-900 mt-4 mb-2">{product.name}</h1>
 
                         <div className="flex items-baseline gap-4 mb-6">
-                            <span className="text-3xl font-medium text-maroon">₹{product.price}</span>
-                            <span className="text-lg text-stone-400 line-through">₹{Math.floor(product.price * 1.2)}</span>
-                            <span className="text-sm font-medium text-emerald-600">20% OFF</span>
+                            <span className="text-3xl font-medium text-maroon">₹{product.price.toLocaleString('en-IN')}</span>
+                            {product.offer_percent > 0 && (
+                                <>
+                                    <span className="text-lg text-stone-400 line-through">
+                                        ₹{Math.round(product.price / (1 - product.offer_percent / 100)).toLocaleString('en-IN')}
+                                    </span>
+                                    <span className="text-sm font-medium text-emerald-600">{product.offer_percent}% OFF</span>
+                                </>
+                            )}
                         </div>
 
                         {/* Desktop Add to Cart Button */}
@@ -155,10 +189,17 @@ export default function ProductDetail() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="pt-4 text-sm text-stone-500 space-y-2">
-                                                    {section.id === "details" && <p>Material: Premium Brass<br />Size: 4 inches<br />Weight: 150g</p>}
-                                                    {section.id === "delivery" && <p>Dispatched in 2-3 days.<br />Free shipping on orders above ₹999.</p>}
-                                                    {section.id === "bulk" && <p>Custom engraving available for orders 50+ qty.<br />Get up to 30% off on bulk orders.</p>}
+                                                <div className="pt-4 text-sm text-stone-500 space-y-2 whitespace-pre-line">
+                                                    {section.id === "details" && (
+                                                        <p>
+                                                            {product.material && <><strong>Material:</strong> {product.material}<br /></>}
+                                                            {product.size && <><strong>Size:</strong> {product.size}<br /></>}
+                                                            {product.weight && <><strong>Weight:</strong> {product.weight}<br /></>}
+                                                            {!product.material && !product.size && !product.weight && "Handcrafted premium quality return gift."}
+                                                        </p>
+                                                    )}
+                                                    {section.id === "delivery" && <p>{product.delivery_info || "Standard delivery within 3-5 business days across India."}</p>}
+                                                    {section.id === "bulk" && <p>{product.bulk_info || "Special pricing available for bulk orders. Contact us for custom branding and packaging options."}</p>}
                                                 </div>
                                             </motion.div>
                                         )}

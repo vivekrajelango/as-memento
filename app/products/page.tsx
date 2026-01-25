@@ -1,31 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { SlidersHorizontal, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
-const categories = ["All", "Wedding", "Baby Shower", "Housewarming", "Festivals", "Decor"];
-const materials = ["Brass", "German Silver", "Wood", "Jute", "Glass"];
-
-// Extended Mock Data
-const products = [
-    { id: "1", name: "Brass Diya Set", price: 120, category: "Decor", image: "/images/decor.png", isBulkAvailable: true },
-    { id: "2", name: "Jute Potli Bags", price: 45, category: "Eco-Friendly", image: "/images/housewarming.png", isBulkAvailable: true },
-    { id: "3", name: "Kumkum Box", price: 85, category: "Wedding", image: "/images/baby-shower.png", isBulkAvailable: true },
-    { id: "4", name: "German Silver Plate", price: 250, category: "Housewarming", image: "/images/wedding.png", isBulkAvailable: true },
-    { id: "5", name: "Thamboolam Bag", price: 35, category: "Wedding", image: "/images/wedding.png", isBulkAvailable: true },
-    { id: "6", name: "Peacock Lamp", price: 450, category: "Decor", image: "/images/festivals.png", isBulkAvailable: false },
-    { id: "7", name: "Sandalwood Incense Holder", price: 150, category: "Decor", image: "/images/decor.png", isBulkAvailable: true },
-    { id: "8", name: "Miniature Brass Pot", price: 95, category: "Baby Shower", image: "/images/baby-shower.png", isBulkAvailable: true },
-];
+const categories = ["All", "Wedding", "Baby Shower", "Housewarming", "Festivals", "Decor", "Eco-Friendly"];
 
 export default function ProductsPage() {
     const [activeCategory, setActiveCategory] = useState("All");
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from("asm-products")
+                .select("*")
+                .order("created_at", { ascending: false });
+
+            if (!error && data) {
+                setProducts(data);
+            }
+            setLoading(false);
+        };
+        fetchProducts();
+    }, []);
 
     const filteredProducts = activeCategory === "All"
         ? products
-        : products.filter(p => p.category === activeCategory || (activeCategory === "Wedding" && p.category === "Eco-Friendly")); // Simple logic for demo
+        : products.filter(p => p.category === activeCategory);
 
     return (
         <div className="min-h-screen bg-stone-50 pb-20">
@@ -59,14 +64,24 @@ export default function ProductsPage() {
             </div>
 
             <div className="container mx-auto px-4 py-6">
-                <p className="text-sm text-stone-500 mb-6">Showing {filteredProducts.length} items</p>
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-3">
+                        <Loader2 className="w-8 h-8 text-maroon animate-spin" />
+                        <p className="text-stone-400 text-sm">Discovering collections...</p>
+                    </div>
+                ) : (
+                    <>
+                        <p className="text-sm text-stone-500 mb-6">Showing {filteredProducts.length} items</p>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    {filteredProducts.map((product, index) => (
-                        <ProductCard key={product.id} product={product} index={index} />
-                    ))}
-                </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                            {filteredProducts.map((product, index) => (
+                                <ProductCard key={product.id} product={product} index={index} />
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
 }
+

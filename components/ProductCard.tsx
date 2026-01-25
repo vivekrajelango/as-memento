@@ -6,12 +6,14 @@ import { motion } from "framer-motion";
 import { Heart, ShoppingBag } from "lucide-react";
 
 interface Product {
-    id: string;
+    id: string | number;
     name: string;
     price: number;
+    offer_percent?: number;
     image: string;
     category: string;
     isBulkAvailable?: boolean;
+    is_bulk_available?: boolean;
 }
 
 interface ProductCardProps {
@@ -20,6 +22,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
+    const originalPrice = product.offer_percent ? Math.round(product.price / (1 - product.offer_percent / 100)) : null;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -29,9 +33,14 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         >
             <Link href={`/product/${product.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-stone-100 mb-3 shadow-sm hover:shadow-md transition-shadow">
-                    {product.isBulkAvailable && (
+                    {(product.isBulkAvailable || product.is_bulk_available) && (
                         <span className="absolute top-2 left-2 z-10 bg-emerald text-white text-[10px] uppercase font-bold px-2 py-1 rounded-full shadow-sm">
                             Bulk Order
+                        </span>
+                    )}
+                    {product.offer_percent && (
+                        <span className="absolute top-2 left-2 z-10 mt-7 bg-orange-500 text-white text-[10px] uppercase font-bold px-2 py-1 rounded-full shadow-sm">
+                            {product.offer_percent}% OFF
                         </span>
                     )}
 
@@ -61,7 +70,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     </h3>
                     <p className="text-stone-500 text-sm">{product.category}</p>
                     <div className="flex items-center justify-between mt-2">
-                        <span className="font-medium text-maroon">₹{product.price.toLocaleString('en-IN')}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="font-medium text-maroon">₹{product.price.toLocaleString('en-IN')}</span>
+                            {originalPrice && (
+                                <span className="text-xs text-stone-400 line-through">₹{originalPrice.toLocaleString('en-IN')}</span>
+                            )}
+                        </div>
                         <span className="text-[10px] text-stone-400">Min. 50 pcs</span>
                     </div>
                 </div>

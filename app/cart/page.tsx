@@ -1,66 +1,118 @@
 "use client";
 
-import { useCart, CartItem } from "@/context/CartContext";
+import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Plus, Minus, ArrowRight, MessageCircle, Loader2 } from "lucide-react";
+import { Trash2, Plus, Minus, MessageCircle, Loader2, CheckCircle2, ShoppingBag as ShoppingBagIcon } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, total, clearCart } = useCart();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
+    const [lastOrderId, setLastOrderId] = useState("");
 
-    const handleWhatsAppCheckout = async () => {
+    // Form State
+    const [customerInfo, setCustomerInfo] = useState({
+        name: "",
+        mobile: "+91 ",
+        address: ""
+    });
+
+    const handlePlaceOrder = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (items.length === 0) return;
+        if (!customerInfo.name || !customerInfo.mobile || !customerInfo.address) {
+            alert("Please fill in all delivery details.");
+            return;
+        }
+
+        // Validate 10-digit mobile (stripping +91 and spaces)
+        const pureMobile = customerInfo.mobile.replace("+91", "").replace(/\s/g, "");
+        if (pureMobile.length !== 10 || !/^\d+$/.test(pureMobile)) {
+            alert("Please enter a valid 10-digit mobile number after +91.");
+            return;
+        }
 
         setIsProcessing(true);
 
-        // Check if admin is logged in to deduct points (4% of total)
-        const cookies = document.cookie.split(';');
-        const authCookie = cookies.find(c => c.trim().startsWith('admin_auth='));
+        const orderId = `ASM-${Math.floor(1000 + Math.random() * 9000)}`;
 
-        if (authCookie) {
-            const value = decodeURIComponent(authCookie.split('=')[1].trim());
-            const username = value === "true" ? "admin" : value;
-            const deduction = Math.round(total * 0.04); // 4% deduction
+        const payload = {
+            order_id: orderId,
+            customer_name: customerInfo.name,
+            customer_mobile: customerInfo.mobile,
+            delivery_address: customerInfo.address,
+            items: items,
+            total_amount: total,
+            status: 'pending'
+        };
 
-            const { data: adminData } = await supabase
-                .from('admin_users')
-                .select('wallet_balance')
-                .eq('username', username)
-                .single();
+        const { error } = await supabase
+            .from('asm-orders')
+            .insert([payload]);
 
-            if (adminData) {
-                if (adminData.wallet_balance < deduction) {
-                    alert(`Insufficient points! You need ${deduction} points, but you have ${adminData.wallet_balance}.`);
-                    setIsProcessing(false);
-                    return;
+        if (error) {
+            alert("Error placing order: " + error.message);
+            setIsProcessing(false);
+        } else {
+            setLastOrderId(orderId);
+            setOrderSuccess(true);
+            clearCart();
+
+            // Success Fireworks
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+            const interval: any = setInterval(function () {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
                 }
 
-                const { error: updateError } = await supabase
-                    .from('admin_users')
-                    .update({ wallet_balance: adminData.wallet_balance - deduction })
-                    .eq('username', username);
-
-                if (updateError) {
-                    console.error("Deduction error:", updateError);
-                } else {
-                    console.log(`Deducted ${deduction} points for order.`);
-                }
-            }
+                const particleCount = 50 * (timeLeft / duration);
+                // @ts-ignore
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                // @ts-ignore
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
         }
-
-        let message = "Hello! I would like to place an order for the following items:\n\n";
-        items.forEach((item, index) => {
-            message += `${index + 1}. ${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}\n`;
-        });
-        message += `\nTotal: ₹${total}\n\nPlease confirm availability and shipping details.`;
-
-        const encodedMessage = encodeURIComponent(message);
-        window.open(`https://wa.me/919884246030?text=${encodedMessage}`, "_blank");
         setIsProcessing(false);
     };
+
+    if (orderSuccess) {
+        return (
+            <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center">
+                <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mb-6"
+                >
+                    <CheckCircle2 size={48} className="text-emerald-600" />
+                </motion.div>
+                <h1 className="text-3xl font-serif font-bold text-stone-800 mb-2">Order Placed Successfully!</h1>
+                <p className="text-stone-500 mb-2">Your order ID is <span className="font-bold text-maroon">{lastOrderId}</span></p>
+                <p className="text-stone-500 mb-8 max-w-md">
+                    We have received your order. Our team will contact you on WhatsApp for confirmation and payment details.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <Link
+                        href="/products"
+                        className="px-8 py-3 bg-maroon text-white font-medium rounded-full hover:bg-maroon/90 transition-colors"
+                    >
+                        Continue Shopping
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     if (items.length === 0) {
         return (
@@ -191,46 +243,76 @@ export default function CartPage() {
                     </div>
                 </div>
 
-                {/* Order Summary */}
+                {/* Checkout Section */}
                 <div className="w-full lg:w-96 flex-shrink-0">
                     <div className="bg-white rounded-2xl shadow-lg border border-gold/20 p-6 md:p-8 sticky top-24">
-                        <h2 className="font-serif text-xl font-bold text-stone-800 mb-6">Order Summary</h2>
+                        <h2 className="font-serif text-xl font-bold text-stone-800 mb-6">Delivery Details</h2>
 
-                        <div className="space-y-4 mb-6 border-b border-stone-100 pb-6">
-                            <div className="flex justify-between text-stone-600">
-                                <span>Subtotal</span>
-                                <span>₹{total}</span>
+                        <form onSubmit={handlePlaceOrder} className="space-y-4 mb-8">
+                            <div>
+                                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-1.5">Full Name</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={customerInfo.name}
+                                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
+                                    placeholder="Enter your name"
+                                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none bg-stone-50 text-sm"
+                                />
                             </div>
-                            <div className="flex justify-between text-stone-600">
-                                <span>Shipping</span>
-                                <span className="text-xs text-stone-400 font-medium self-center">(Calculated on checkout)</span>
+                            <div>
+                                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-1.5">Mobile Number</label>
+                                <input
+                                    type="tel"
+                                    required
+                                    value={customerInfo.mobile}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val.startsWith("+91 ")) {
+                                            setCustomerInfo(prev => ({ ...prev, mobile: val }));
+                                        } else if (val.startsWith("+91")) {
+                                            setCustomerInfo(prev => ({ ...prev, mobile: "+91 " + val.slice(3) }));
+                                        }
+                                    }}
+                                    placeholder="+91 9876543210"
+                                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none bg-stone-50 text-sm font-medium"
+                                />
                             </div>
-                            <div className="flex justify-between text-stone-600">
-                                <span>Tax</span>
-                                <span className="text-xs text-stone-400 font-medium self-center">(Inclusive)</span>
+                            <div>
+                                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-1.5">Delivery Address</label>
+                                <textarea
+                                    required
+                                    value={customerInfo.address}
+                                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, address: e.target.value }))}
+                                    placeholder="House No, Street, Landmark, City, Pincode"
+                                    rows={3}
+                                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-maroon focus:ring-1 focus:ring-maroon outline-none bg-stone-50 text-sm resize-none"
+                                />
                             </div>
-                        </div>
 
-                        <div className="flex justify-between items-center mb-8">
-                            <span className="font-bold text-xl text-stone-800">Total</span>
-                            <span className="font-bold text-2xl text-maroon">₹{total}</span>
-                        </div>
+                            <div className="pt-4 border-t border-stone-100">
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className="font-bold text-xl text-stone-800">Total</span>
+                                    <span className="font-bold text-2xl text-maroon">₹{total}</span>
+                                </div>
 
-                        <button
-                            onClick={handleWhatsAppCheckout}
-                            disabled={isProcessing}
-                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-100 disabled:opacity-70 disabled:scale-100"
-                        >
-                            {isProcessing ? (
-                                <Loader2 size={20} className="animate-spin" />
-                            ) : (
-                                <MessageCircle size={20} />
-                            )}
-                            {isProcessing ? "Processing..." : "Confirm Order"}
-                        </button>
+                                <button
+                                    type="submit"
+                                    disabled={isProcessing}
+                                    className="w-full bg-maroon text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg shadow-maroon/20 disabled:opacity-70 disabled:scale-100"
+                                >
+                                    {isProcessing ? (
+                                        <Loader2 size={20} className="animate-spin" />
+                                    ) : (
+                                        <ShoppingBagIcon size={20} />
+                                    )}
+                                    {isProcessing ? "Placing Order..." : "Place Order Now"}
+                                </button>
+                            </div>
+                        </form>
 
-                        <p className="text-xs text-stone-400 text-center mt-4 leading-relaxed">
-                            By clicking Confirm, you will be redirected to WhatsApp to send your order details directly to our team.
+                        <p className="text-xs text-stone-400 text-center leading-relaxed">
+                            Once placed, you will receive a unique Order ID to track your gifts.
                         </p>
                     </div>
                 </div>

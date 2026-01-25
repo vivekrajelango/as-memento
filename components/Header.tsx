@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, User, Menu, Heart, X, ChevronRight, Wallet, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, User, Menu, Heart, X, ChevronRight, Wallet, LayoutDashboard, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabaseClient";
@@ -52,9 +52,16 @@ export default function Header() {
         };
         checkAdmin();
 
+        // Listen for manual wallet updates
+        const handleWalletUpdate = () => checkAdmin();
+        window.addEventListener('wallet-update', handleWalletUpdate);
+
         // Optional: listen for changes or refresh periodically
         const interval = setInterval(checkAdmin, 30000);
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('wallet-update', handleWalletUpdate);
+        };
     }, []);
 
     return (
@@ -93,16 +100,34 @@ export default function Header() {
                         {adminUser ? (
                             <>
 
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-stone-50 rounded-full border border-stone-100 shadow-sm">
+                                <Link href="/admin/wallet" className="flex items-center gap-1.5 px-2.5 py-1.5 bg-stone-50 rounded-full border border-stone-100 shadow-sm hover:border-maroon/20 hover:bg-white transition-all">
                                     <Wallet size={16} className="text-maroon md:w-[18px] md:h-[18px]" />
                                     <div className="flex flex-col leading-none">
                                         <span className="text-[8px] md:text-[10px] text-stone-400 font-bold uppercase tracking-wider">Wallet</span>
                                         <span className="text-xs md:text-sm font-bold text-stone-800">
                                             {walletPoints !== null
                                                 ? walletPoints.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-                                                : '...'}
+                                                : '0'}
                                         </span>
                                     </div>
+                                </Link>
+                                <div className="hidden md:flex items-center gap-2">
+                                    <Link
+                                        href="/admin/products"
+                                        className="text-[10px] font-bold uppercase tracking-wider text-stone-500 hover:text-maroon transition-colors px-2 py-1"
+                                    >
+                                        Manage
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            document.cookie = "admin_auth=; path=/; max-age=0";
+                                            window.location.href = "/admin/login";
+                                        }}
+                                        className="p-1.5 text-stone-400 hover:text-red-600 transition-colors"
+                                        title="Logout"
+                                    >
+                                        <LogOut size={18} />
+                                    </button>
                                 </div>
                             </>
                         ) : (
@@ -164,62 +189,87 @@ export default function Header() {
                                 </div>
 
                                 <nav className="space-y-2">
-                                    {[
-                                        { href: "/", label: "Home" },
-                                        { href: "/products", label: "All Collections" },
-                                        { href: "/products?category=wedding", label: "Wedding Gifts" },
-                                        { href: "/products?category=baby-shower", label: "Baby Shower Gifts" },
-                                        { href: "/about", label: "Our Story" },
-                                        { href: "/contact", label: "Contact Us" },
-                                    ].map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-sandalwood-light hover:text-maroon transition-colors font-medium"
-                                        >
-                                            {link.label}
-                                            <ChevronRight size={18} className="text-stone-400" />
-                                        </Link>
-                                    ))}
+                                    {adminUser ? (
+                                        <>
+                                            <Link
+                                                href="/"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-stone-50 hover:text-maroon transition-colors font-medium"
+                                            >
+                                                Go to Website
+                                                <ChevronRight size={18} className="text-stone-400" />
+                                            </Link>
+                                            <Link
+                                                href="/admin/products"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-stone-50 hover:text-maroon transition-colors font-medium"
+                                            >
+                                                Manage Products
+                                                <ChevronRight size={18} className="text-stone-400" />
+                                            </Link>
+                                            <Link
+                                                href="/admin/orders"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-stone-50 hover:text-maroon transition-colors font-medium"
+                                            >
+                                                Manage Orders
+                                                <ChevronRight size={18} className="text-stone-400" />
+                                            </Link>
+                                            <button
+                                                onClick={() => {
+                                                    document.cookie = "admin_auth=; path=/; max-age=0";
+                                                    window.location.href = "/admin/login";
+                                                }}
+                                                className="w-full flex items-center justify-between p-4 rounded-xl text-red-600 hover:bg-red-50 transition-colors font-medium"
+                                            >
+                                                Logout
+                                                <LogOut size={18} />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {[
+                                                { href: "/", label: "Home" },
+                                                { href: "/products", label: "All Collections" },
+                                                { href: "/products?category=wedding", label: "Wedding Gifts" },
+                                                { href: "/products?category=baby-shower", label: "Baby Shower Gifts" },
+                                                { href: "/about", label: "Our Story" },
+                                                { href: "/contact", label: "Contact Us" },
+                                            ].map((link) => (
+                                                <Link
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-sandalwood-light hover:text-maroon transition-colors font-medium"
+                                                >
+                                                    {link.label}
+                                                    <ChevronRight size={18} className="text-stone-400" />
+                                                </Link>
+                                            ))}
+                                        </>
+                                    )}
                                 </nav>
 
-                                <div className="mt-8 pt-8 border-t border-stone-100">
-                                    <h3 className="text-stone-400 text-xs font-bold uppercase tracking-widest mb-4">Fast Access</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {adminUser ? (
-                                            <>
-                                                <div className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
-                                                    <Wallet className="text-maroon mb-2" size={20} />
-                                                    <span className="text-sm font-bold text-stone-800">
-                                                        {walletPoints?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) || '0'}
+                                {!adminUser && (
+                                    <div className="mt-8 pt-8 border-t border-stone-100">
+                                        <h3 className="text-stone-400 text-xs font-bold uppercase tracking-widest mb-4">Fast Access</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
+                                                <ShoppingBag className="text-maroon mb-2" size={20} />
+                                                <span className="text-xs font-medium text-stone-600">Cart</span>
+                                                {count > 0 && (
+                                                    <span className="mt-1 px-2 py-0.5 bg-gold text-white text-[10px] rounded-full font-bold">
+                                                        {count} Items
                                                     </span>
-                                                    <span className="text-[10px] text-stone-400 uppercase font-bold">Points</span>
-                                                </div>
-                                                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
-                                                    <LayoutDashboard className="text-maroon mb-2" size={20} />
-                                                    <span className="text-xs font-medium text-stone-600">Dashboard</span>
-                                                </Link>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
-                                                    <ShoppingBag className="text-maroon mb-2" size={20} />
-                                                    <span className="text-xs font-medium text-stone-600">Cart</span>
-                                                    {count > 0 && (
-                                                        <span className="mt-1 px-2 py-0.5 bg-gold text-white text-[10px] rounded-full font-bold">
-                                                            {count} Items
-                                                        </span>
-                                                    )}
-                                                </Link>
-                                                <Link href="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
-                                                    <User className="text-maroon mb-2" size={20} />
-                                                    <span className="text-xs font-medium text-stone-600">Admin</span>
-                                                </Link>
-                                            </>
-                                        )}
+                                                )}
+                                            </Link>
+                                            <Link href="/admin/login" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center justify-center p-4 bg-stone-50 rounded-xl text-center">
+                                                <User className="text-maroon mb-2" size={20} />
+                                                <span className="text-xs font-medium text-stone-600">Admin</span>
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </motion.div>
                     </>

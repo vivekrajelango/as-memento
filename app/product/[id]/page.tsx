@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield, ShoppingBag, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Share2, MessageCircle, ChevronDown, Check, Truck, Shield, ShoppingBag, Loader2, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabaseClient";
@@ -17,10 +17,13 @@ export default function ProductDetail() {
 
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const { addItem } = useCart();
+    const { items, addItem, updateQuantity } = useCart();
     const [activeImage, setActiveImage] = useState(0);
     const [openSection, setOpenSection] = useState<string | null>("details");
-    const [isAdded, setIsAdded] = useState(false);
+
+    // Find current quantity in cart
+    const cartItem = items.find(item => item.id.toString() === id.toString());
+    const quantity = cartItem ? cartItem.quantity : 0;
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -55,9 +58,10 @@ export default function ProductDetail() {
             quantity: 1,
             category: product.category
         });
-        setIsAdded(true);
-        setTimeout(() => setIsAdded(false), 2000);
     };
+
+    const handleIncrease = () => updateQuantity(id, quantity + 1);
+    const handleDecrease = () => updateQuantity(id, quantity - 1);
 
     if (loading) {
         return (
@@ -139,27 +143,33 @@ export default function ProductDetail() {
                             )}
                         </div>
 
-                        {/* Desktop Add to Cart Button */}
+                        {/* Desktop Add to Cart / Quantity Selection */}
                         <div className="hidden md:flex gap-4 mb-8">
-                            <button
-                                onClick={handleAddToCart}
-                                className={cn(
-                                    "flex-1 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-all transform hover:scale-[1.02]",
-                                    isAdded ? "bg-emerald-600" : "bg-maroon hover:bg-[#600000]"
-                                )}
-                            >
-                                {isAdded ? (
-                                    <>
-                                        <Check size={20} />
-                                        Added to Cart
-                                    </>
-                                ) : (
-                                    <>
-                                        <ShoppingBag size={20} />
-                                        Add to Cart
-                                    </>
-                                )}
-                            </button>
+                            {quantity > 0 ? (
+                                <div className="flex items-center bg-stone-100 rounded-full p-1 border border-stone-200">
+                                    <button
+                                        onClick={handleDecrease}
+                                        className="w-12 h-12 flex items-center justify-center text-maroon hover:bg-white rounded-full transition-all shadow-sm"
+                                    >
+                                        <Minus size={20} strokeWidth={3} />
+                                    </button>
+                                    <span className="w-16 text-center font-serif font-bold text-xl text-stone-900">{quantity}</span>
+                                    <button
+                                        onClick={handleIncrease}
+                                        className="w-12 h-12 flex items-center justify-center text-maroon hover:bg-white rounded-full transition-all shadow-sm"
+                                    >
+                                        <Plus size={20} strokeWidth={3} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={handleAddToCart}
+                                    className="flex-1 max-w-sm bg-maroon hover:bg-[#600000] text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-all transform hover:scale-[1.02]"
+                                >
+                                    <ShoppingBag size={20} />
+                                    Add to Cart
+                                </button>
+                            )}
                         </div>
 
                         <p className="text-stone-600 leading-relaxed mb-8">
@@ -223,27 +233,33 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-            {/* Fixed Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 md:hidden z-50 flex gap-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
-                <button
-                    onClick={handleAddToCart}
-                    className={cn(
-                        "w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-maroon/30 transition-colors",
-                        isAdded ? "bg-emerald-600" : "bg-gradient-to-r from-maroon to-[#600000]"
-                    )}
-                >
-                    {isAdded ? (
-                        <>
-                            <Check size={18} />
-                            Added
-                        </>
-                    ) : (
-                        <>
-                            <ShoppingBag size={18} />
-                            Add to Cart
-                        </>
-                    )}
-                </button>
+            {/* Fixed Bottom Action Bar (Mobile) */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 md:hidden z-50 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+                {quantity > 0 ? (
+                    <div className="flex items-center justify-between bg-stone-50 rounded-full p-1 border border-stone-100 shadow-inner">
+                        <button
+                            onClick={handleDecrease}
+                            className="w-12 h-12 flex items-center justify-center text-maroon bg-white rounded-full shadow-sm"
+                        >
+                            <Minus size={20} strokeWidth={3} />
+                        </button>
+                        <span className="font-serif font-bold text-xl text-stone-900">{quantity}</span>
+                        <button
+                            onClick={handleIncrease}
+                            className="w-12 h-12 flex items-center justify-center text-maroon bg-white rounded-full shadow-sm"
+                        >
+                            <Plus size={20} strokeWidth={3} />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={handleAddToCart}
+                        className="w-full bg-gradient-to-r from-maroon to-[#600000] text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-maroon/20"
+                    >
+                        <ShoppingBag size={18} />
+                        Add to Cart
+                    </button>
+                )}
             </div>
         </div>
     );

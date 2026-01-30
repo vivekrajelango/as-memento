@@ -10,11 +10,9 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  // Use webpack for PWA compatibility
-  experimental: {
-    // turbo: undefined 
-  },
+  output: 'export',
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

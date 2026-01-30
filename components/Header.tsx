@@ -215,6 +215,14 @@ export default function Header() {
                                                 Manage Orders
                                                 <ChevronRight size={18} className="text-stone-400" />
                                             </Link>
+                                            <Link
+                                                href="/admin/banners"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center justify-between p-4 rounded-xl text-stone-700 hover:bg-stone-50 hover:text-maroon transition-colors font-medium"
+                                            >
+                                                Manage Banners
+                                                <ChevronRight size={18} className="text-stone-400" />
+                                            </Link>
                                             <button
                                                 onClick={() => {
                                                     document.cookie = "admin_auth=; path=/; max-age=0";

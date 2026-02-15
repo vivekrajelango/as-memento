@@ -79,7 +79,7 @@ export default function Header() {
                     {/* Logo */}
                     <Link href="/" className="relative h-16 w-64 md:w-48 flex-shrink-0">
                         <Image
-                            src="/images/logo3.png"
+                            src="/images/logo.svg"
                             alt="Momento"
                             fill
                             className="object-contain object-left p-1"
@@ -174,7 +174,7 @@ export default function Header() {
                                 <div className="flex justify-between items-center mb-8">
                                     <div className="relative h-12 w-36">
                                         <Image
-                                            src="/images/logo3.png"
+                                            src="/images/logo.svg"
                                             alt="Momento"
                                             fill
                                             className="object-contain object-left"

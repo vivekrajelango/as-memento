@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" fill="none">
+  <defs>
+    <!-- Rich gold gradient -->
+    <linearGradient id="richGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BF953F"/>
+      <stop offset="25%" stop-color="#FCF6BA"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="75%" stop-color="#FCF6BA"/>
+      <stop offset="100%" stop-color="#BF953F"/>
+    </linearGradient>
+    <!-- Deep maroon gradient -->
+    <linearGradient id="deepMaroon" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6B0000"/>
+      <stop offset="50%" stop-color="#800000"/>
+      <stop offset="100%" stop-color="#4A0000"/>
+    </linearGradient>
+    <!-- Warm gold for text -->
+    <linearGradient id="warmGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="50%" stop-color="#F5E7A0"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+    <!-- Radial glow for emblem -->
+    <radialGradient id="emblemBg" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#900000"/>
+      <stop offset="100%" stop-color="#4A0000"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== CIRCULAR EMBLEM ===== -->
+
+  <!-- Outermost decorative ring -->
+  <circle cx="80" cy="80" r="78" fill="none" stroke="url(#richGold)" stroke-width="2"/>
+
+  <!-- Ornamental dots around outer ring -->
+  <circle cx="80" cy="2" r="1.5" fill="url(#richGold)"/>
+  <circle cx="80" cy="158" r="1.5" fill="url(#richGold)"/>
+  <circle cx="2" cy="80" r="1.5" fill="url(#richGold)"/>
+  <circle cx="158" cy="80" r="1.5" fill="url(#richGold)"/>
+  <!-- Diagonal dots -->
+  <circle cx="24.8" cy="24.8" r="1.2" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="135.2" cy="24.8" r="1.2" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="24.8" cy="135.2" r="1.2" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="135.2" cy="135.2" r="1.2" fill="url(#richGold)" opacity="0.7"/>
+
+  <!-- Second ring -->
+  <circle cx="80" cy="80" r="73" fill="none" stroke="url(#richGold)" stroke-width="0.5" opacity="0.5"/>
+
+  <!-- Main filled circle -->
+  <circle cx="80" cy="80" r="70" fill="url(#emblemBg)"/>
+
+  <!-- Inner decorative ring -->
+  <circle cx="80" cy="80" r="64" fill="none" stroke="url(#richGold)" stroke-width="0.6" opacity="0.35"/>
+
+  <!-- Top ornamental flourish -->
+  <g transform="translate(80, 22)" opacity="0.8">
+    <path d="M0,0 Q-8,6 -18,4" stroke="url(#richGold)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q8,6 18,4" stroke="url(#richGold)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="1.5" fill="url(#richGold)"/>
+    <path d="M-18,4 Q-22,3 -24,6" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M18,4 Q22,3 24,6" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Gift box icon (small, centered above monogram) -->
+  <g transform="translate(72, 30)" opacity="0.6">
+    <rect x="2" y="6" width="16" height="12" rx="1" fill="none" stroke="url(#richGold)" stroke-width="1"/>
+    <rect x="0" y="4" width="20" height="4" rx="1" fill="none" stroke="url(#richGold)" stroke-width="1"/>
+    <line x1="10" y1="4" x2="10" y2="18" stroke="url(#richGold)" stroke-width="0.8"/>
+    <path d="M10,4 Q6,0 3,1" stroke="url(#richGold)" stroke-width="0.8" fill="none"/>
+    <path d="M10,4 Q14,0 17,1" stroke="url(#richGold)" stroke-width="0.8" fill="none"/>
+  </g>
+
+  <!-- Monogram "A" -->
+  <text x="44" y="100" font-family="'Playfair Display', 'Georgia', serif" font-size="62" font-weight="800" fill="url(#richGold)">A</text>
+
+  <!-- Decorative ampersand/dot -->
+  <circle cx="80" cy="78" r="2" fill="url(#richGold)" opacity="0.6"/>
+
+  <!-- Monogram "S" -->
+  <text x="86" y="100" font-family="'Playfair Display', 'Georgia', serif" font-size="62" font-weight="800" fill="url(#warmGold)">S</text>
+
+  <!-- Ornamental line under monogram -->
+  <line x1="46" y1="108" x2="114" y2="108" stroke="url(#richGold)" stroke-width="0.6" opacity="0.5"/>
+  <path d="M56,108 Q80,115 104,108" stroke="url(#richGold)" stroke-width="0.8" fill="none" opacity="0.4"/>
+
+  <!-- "MEMENTO" at bottom of circle -->
+  <text x="80" y="128" font-family="'Playfair Display', 'Georgia', serif" font-size="11" font-weight="600" fill="url(#richGold)" letter-spacing="4" text-anchor="middle">MEMENTO</text>
+
+  <!-- Bottom flourish -->
+  <g transform="translate(80, 136)" opacity="0.6">
+    <path d="M0,0 Q-10,4 -16,2" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q10,4 16,2" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="1" fill="url(#richGold)"/>
+  </g>
+
+
+  <!-- ===== RIGHT SIDE - BRAND TEXT ===== -->
+
+  <!-- "Aathi SaRa" in elegant serif -->
+  <text x="190" y="44" font-family="'Playfair Display', 'Georgia', serif" font-size="24" font-weight="500" fill="#9A7B4F" letter-spacing="5">AATHI SARA</text>
+
+  <!-- Top decorative line -->
+  <line x1="190" y1="26" x2="440" y2="26" stroke="url(#richGold)" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Left ornamental flourish before MOMENTO -->
+  <g transform="translate(183, 75)" opacity="0.5">
+    <path d="M0,0 Q-5,-8 -2,-14" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q-6,2 -4,8" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- "MOMENTO" main brand -->
+  <text x="192" y="88" font-family="'Playfair Display', 'Georgia', serif" font-size="48" font-weight="800" fill="url(#deepMaroon)" letter-spacing="6">MOMENTO</text>
+
+  <!-- Right ornamental flourish after MOMENTO -->
+  <g transform="translate(540, 78)" opacity="0.5">
+    <path d="M0,0 Q5,-8 2,-14" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q6,2 4,8" stroke="url(#richGold)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Ornamental divider -->
+  <g transform="translate(192, 100)">
+    <line x1="0" y1="0" x2="120" y2="0" stroke="url(#richGold)" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="132" cy="0" r="2" fill="url(#richGold)" opacity="0.5"/>
+    <line x1="144" y1="0" x2="330" y2="0" stroke="url(#richGold)" stroke-width="0.8" opacity="0.6"/>
+    <!-- Small diamond in center divider -->
+    <rect x="130" y="-2" width="4" height="4" rx="0.5" fill="url(#richGold)" opacity="0.4" transform="rotate(45, 132, 0)"/>
+  </g>
+
+  <!-- Tagline -->
+  <text x="192" y="122" font-family="'Outfit', 'Helvetica Neue', sans-serif" font-size="14" font-weight="400" fill="#8B7355" letter-spacing="5">GIFTS THAT BRING SMILES</text>
+
+  <!-- Bottom decorative line -->
+  <line x1="192" y1="136" x2="440" y2="136" stroke="url(#richGold)" stroke-width="0.5" opacity="0.3"/>
+</svg>

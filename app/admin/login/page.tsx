@@ -46,7 +46,7 @@ export default function AdminLogin() {
                 <div className="pt-10 pb-6 px-8 text-center bg-white">
                     <div className="relative w-56 h-20 mx-auto mb-6">
                         <Image
-                            src="/images/logo3.png"
+                            src="/images/logo.svg"
                             alt="Momento Admin"
                             fill
                             className="object-contain"

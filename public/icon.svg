@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="richGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BF953F"/>
+      <stop offset="25%" stop-color="#FCF6BA"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="75%" stop-color="#FCF6BA"/>
+      <stop offset="100%" stop-color="#BF953F"/>
+    </linearGradient>
+    <linearGradient id="warmGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="50%" stop-color="#F5E7A0"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+    <radialGradient id="emblemBg" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#900000"/>
+      <stop offset="100%" stop-color="#4A0000"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Outermost ring -->
+  <circle cx="256" cy="256" r="250" fill="none" stroke="url(#richGold)" stroke-width="8"/>
+
+  <!-- Ornamental dots at compass points -->
+  <circle cx="256" cy="6" r="5" fill="url(#richGold)"/>
+  <circle cx="256" cy="506" r="5" fill="url(#richGold)"/>
+  <circle cx="6" cy="256" r="5" fill="url(#richGold)"/>
+  <circle cx="506" cy="256" r="5" fill="url(#richGold)"/>
+  <circle cx="78" cy="78" r="4" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="434" cy="78" r="4" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="78" cy="434" r="4" fill="url(#richGold)" opacity="0.7"/>
+  <circle cx="434" cy="434" r="4" fill="url(#richGold)" opacity="0.7"/>
+
+  <!-- Second ring -->
+  <circle cx="256" cy="256" r="234" fill="none" stroke="url(#richGold)" stroke-width="2" opacity="0.5"/>
+
+  <!-- Main filled circle -->
+  <circle cx="256" cy="256" r="224" fill="url(#emblemBg)"/>
+
+  <!-- Inner decorative ring -->
+  <circle cx="256" cy="256" r="205" fill="none" stroke="url(#richGold)" stroke-width="2" opacity="0.35"/>
+
+  <!-- Top ornamental flourish -->
+  <g transform="translate(256, 68)" opacity="0.8">
+    <path d="M0,0 Q-26,20 -58,13" stroke="url(#richGold)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q26,20 58,13" stroke="url(#richGold)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="5" fill="url(#richGold)"/>
+    <path d="M-58,13 Q-70,10 -77,19" stroke="url(#richGold)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M58,13 Q70,10 77,19" stroke="url(#richGold)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Gift box icon -->
+  <g transform="translate(224, 95)" opacity="0.55">
+    <rect x="6" y="20" width="52" height="38" rx="3" fill="none" stroke="url(#richGold)" stroke-width="3"/>
+    <rect x="0" y="12" width="64" height="12" rx="3" fill="none" stroke="url(#richGold)" stroke-width="3"/>
+    <line x1="32" y1="12" x2="32" y2="58" stroke="url(#richGold)" stroke-width="2.5"/>
+    <path d="M32,12 Q20,-2 10,2" stroke="url(#richGold)" stroke-width="2.5" fill="none"/>
+    <path d="M32,12 Q44,-2 54,2" stroke="url(#richGold)" stroke-width="2.5" fill="none"/>
+  </g>
+
+  <!-- Monogram "A" -->
+  <text x="140" y="320" font-family="'Playfair Display', 'Georgia', serif" font-size="200" font-weight="800" fill="url(#richGold)">A</text>
+
+  <!-- Decorative dot -->
+  <circle cx="256" cy="248" r="6" fill="url(#richGold)" opacity="0.6"/>
+
+  <!-- Monogram "S" -->
+  <text x="274" y="320" font-family="'Playfair Display', 'Georgia', serif" font-size="200" font-weight="800" fill="url(#warmGold)">S</text>
+
+  <!-- Ornamental line under monogram -->
+  <line x1="146" y1="345" x2="366" y2="345" stroke="url(#richGold)" stroke-width="2" opacity="0.5"/>
+  <path d="M180,345 Q256,370 332,345" stroke="url(#richGold)" stroke-width="2.5" fill="none" opacity="0.4"/>
+
+  <!-- "MEMENTO" text -->
+  <text x="256" y="405" font-family="'Playfair Display', 'Georgia', serif" font-size="36" font-weight="600" fill="url(#richGold)" letter-spacing="14" text-anchor="middle">MEMENTO</text>
+
+  <!-- Bottom flourish -->
+  <g transform="translate(256, 432)" opacity="0.6">
+    <path d="M0,0 Q-32,13 -52,6" stroke="url(#richGold)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q32,13 52,6" stroke="url(#richGold)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="3.5" fill="url(#richGold)"/>
+  </g>
+</svg>

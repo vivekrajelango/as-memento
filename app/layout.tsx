@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: "Aarthi Sara Memento | Return Gifts",
   description: "Beautiful Return Gifts for Every Auspicious Occasion. Wedding, Baby Shower, Housewarming gifts.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
